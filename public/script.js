@@ -1,4 +1,4 @@
-const APP_ID = "YOUR_APP_ID";
+const APP_ID = "YOUR_FACEBOK_APP_ID";
 const REDIRECT = "http://localhost:3000/auth";
 
 document.getElementById("loginBtn").href =
@@ -30,19 +30,32 @@ async function loadPages() {
 async function post() {
 
     let text = document.getElementById("postText").value;
+    let link = document.getElementById("postLink").value;
+    let images = document.getElementById("postImages").files;
+    let video = document.getElementById("postVideo").files[0];
 
     let select = document.getElementById("pages");
     let page_id = select.value;
     let page_token = select.selectedOptions[0].dataset.token;
 
+    let form = new FormData();
+
+    form.append("message", text);
+    form.append("link", link);
+    form.append("page_id", page_id);
+    form.append("page_token", page_token);
+
+    for (let img of images) {
+        form.append("images", img);
+    }
+
+    // if (video) {
+    //     form.append("video", video);
+    // }
+
     await fetch("/post", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            message: text,
-            page_id,
-            page_token
-        })
+        body: form
     });
 
     alert("Posted!");
